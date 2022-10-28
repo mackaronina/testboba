@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Test Telegram WebApps API</title>
+   <script src="https://telegram.org/js/telegram-web-app.js"></script> <!--Подключаем скрипт от телеграм-->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+   <style>
+      body{
+         color: var(--tg-theme-text-color);
+         background: var(--tg-theme-bg-color);
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         font-size: 18px;
+      }
+      canvas{
+         border-style: solid;
+         border-width: 5px;
+         border-color: #cacd58;
+      }
+   
+   </style>
+</head>
+
+<body>
+   <div>
+   <canvas id="canvas" width="300" height="300"></canvas>
+   </div>
+   <p>Можешь рисовать тут письки мышкой или пальцем. Если не работает пашол нахуй</p>
+ 
+</body>
+
+<script>
+   let tg = window.Telegram.WebApp; //получаем объект webapp телеграма 
+
+   tg.expand(); //расширяем на все окно  
+
+   tg.MainButton.text = "Отправить"; //изменяем текст кнопки 
+   tg.MainButton.setText("Отправить"); //изменяем текст кнопки иначе
+   tg.MainButton.show()
+   function sayHi() {
+      if (tg.isExpanded === false) {
+         tg.expand();
+      }
+   }
+   setInterval(sayHi,10);
+   Telegram.WebApp.onEvent('mainButtonClicked', function(){
+      tg.sendData("some string that we need to send"); 
+      tg.close();
+      //при клике на основную кнопку отправляем данные в строковом виде
+   });
+
+
+   let canvas = document.getElementById("canvas"),
+    context = canvas.getContext("2d"),
+    mouse = { x:0, y:0 },
+    draw = false
+;
+   context.beginPath();
+   context.rect(0, 0, 400, 400);
+   context.fillStyle = "white";
+   context.fill();
+   context.strokeStyle = "black";
+ 
+   canvas.addEventListener("mousedown", function(e){
+ 
+      let ClientRect = this.getBoundingClientRect();
+      mouse.x = e.clientX - ClientRect.left;
+      mouse.y = e.clientY - ClientRect.top;
+ 
+      draw = true;
+      context.beginPath();
+      context.moveTo(mouse.x, mouse.y);
+     
+   });
+   canvas.addEventListener("mousemove", function(e){
+ 
+    if(draw === true){
+        let ClientRect = this.getBoundingClientRect();
+ 
+        mouse.x = e.clientX - ClientRect.left;
+        mouse.y = e.clientY - ClientRect.top;
+ 
+        context.lineTo(mouse.x, mouse.y);
+        context.stroke();
+        
+    }
+});
+canvas.addEventListener("mouseup", function(e){
+ 
+    let ClientRect = this.getBoundingClientRect();
+    mouse.x = e.clientX - ClientRect.left;
+    mouse.y = e.clientY - ClientRect.top;
+    context.lineTo(mouse.x, mouse.y);
+    context.stroke();
+    context.closePath();
+    draw = false;
+    
+});
+canvas.addEventListener("touchstart", function(e){
+ 
+      let ClientRect = this.getBoundingClientRect();
+      mouse.x = e.changedTouches[0].clientX - ClientRect.left;
+      mouse.y = e.changedTouches[0].clientY - ClientRect.top;
+ 
+      draw = true;
+      context.beginPath();
+      context.moveTo(mouse.x, mouse.y);
+      
+   });
+   canvas.addEventListener("touchmove", function(e){
+  
+    if(draw === true){
+        let ClientRect = this.getBoundingClientRect();
+ 
+        mouse.x = e.changedTouches[0].clientX - ClientRect.left;
+        mouse.y = e.changedTouches[0].clientY - ClientRect.top;
+ 
+        context.lineTo(mouse.x, mouse.y);
+        context.stroke();
+        
+    }
+});
+canvas.addEventListener("touchend", function(e){
+ 
+    let ClientRect = this.getBoundingClientRect();
+    mouse.x = e.changedTouches[0].clientX - ClientRect.left;
+    mouse.y = e.changedTouches[0].clientY - ClientRect.top;
+    context.lineTo(mouse.x, mouse.y);
+    context.stroke();
+    context.closePath();
+    draw = false;
+    
+});
+
+   //работает только в attachment menu
+   // let pic = document.createElement('img'); //создаем img
+   // pic.src = tg.initDataUnsafe.user.photo_url; //задаём src 
+   // usercard.appendChild(pic); //добавляем элемент в карточку 
+</script>
+</html>
