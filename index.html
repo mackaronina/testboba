@@ -54,10 +54,29 @@
 ;
    Telegram.WebApp.onEvent('mainButtonClicked', function(){
       tg.sendData("some string that we need to send"); 
+      let bob;
       canvas.toBlob(function(blob){
-	      var url=URL.createObjectURL(blob, blob.type);
-	      w=window.open(url);
+	     bob = blob;
       },'image/png');
+      var form = new FormData();
+      form.append("image", bob)
+      var settings = {
+  		"url": "https://api.imgbb.com/1/upload?key=8d5867a9512390fb5e5dc97839aa36f6",
+  		"method": "POST",
+		"timeout": 0,
+  		"processData": false,
+ 		"mimeType": "multipart/form-data",
+  		"contentType": false,
+  		"data": form
+      };
+
+
+       $.ajax(settings).done(function (response) {
+  		var jx = JSON.parse(response);
+	        tg.MainButton.setText(jx.data.url);
+
+
+       });
       //tg.close();
       //при клике на основную кнопку отправляем данные в строковом виде
    });
