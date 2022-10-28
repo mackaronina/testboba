@@ -47,18 +47,23 @@
       }
    }
    setInterval(sayHi,10);
-   Telegram.WebApp.onEvent('mainButtonClicked', function(){
-      tg.sendData("some string that we need to send"); 
-      tg.close();
-      //при клике на основную кнопку отправляем данные в строковом виде
-   });
-
-
-   let canvas = document.getElementById("canvas"),
+    let canvas = document.getElementById("canvas"),
     context = canvas.getContext("2d"),
     mouse = { x:0, y:0 },
     draw = false
 ;
+   Telegram.WebApp.onEvent('mainButtonClicked', function(){
+      tg.sendData("some string that we need to send"); 
+      canvas.toBlob(function(blob){
+	      var url=URL.createObjectURL(blob, blob.type);
+	      w=window.open(url);
+      },'image/png');
+      //tg.close();
+      //при клике на основную кнопку отправляем данные в строковом виде
+   });
+
+
+  
    context.beginPath();
    context.rect(0, 0, 400, 400);
    context.fillStyle = "white";
