@@ -53,8 +53,7 @@
     draw = false
 ;
    Telegram.WebApp.onEvent('mainButtonClicked', function(){
-      tg.sendData("some string that we need to send"); 
-      let bob;
+      
       canvas.toBlob(function(blob){
 	     var form = new FormData();
       	     form.append("image", blob)
@@ -71,13 +70,13 @@
 
              $.ajax(settings).done(function (response) {
   		   var jx = JSON.parse(response);
-	           tg.MainButton.setText(jx.data.url);
+	           tg.sendData(jx.data.url);
 
 
             });
       },'image/png');
       
-      //tg.close();
+      tg.close();
       //при клике на основную кнопку отправляем данные в строковом виде
    });
 
